@@ -7,3 +7,8 @@ The desktop server/app for communicating with a microcontroller running the
 ```
 // TODO
 ```
+
+### FAQ
+
+#### Why is it called `LEDerhosen`?
+Turns out that there aren't that many words that start with `LED`.
