@@ -1,0 +1,78 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+group 'wtf.log'
+version '1.0-SNAPSHOT'
+
+buildscript {
+
+  ext.versions = [
+    kotlin: '1.1-M04',
+    shadow: '1.2.4',
+    okio: '1.11.0',
+    rebound: '0.3.8',
+    rxjava: '1.2.4',
+    rxrelay: '1.2.0',
+    javaosc: '0.3',
+    jSerialComm: '1.3.11',
+    jcommander: '2.1.0'
+  ]
+
+  repositories {
+    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+  }
+
+}
+
+allprojects {
+
+  repositories {
+    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
+    mavenCentral()
+    jcenter()
+  }
+
+}
+
+subprojects.each { subproject ->
+  evaluationDependsOn(subproject.path)
+}
+
+task fatJar(type: Jar, dependsOn: subprojects.jar) {
+  manifest {
+    attributes 'Main-Class': 'wtf.log.lederhosen.server.MainKt'
+  }
+  
+  subprojects.each { subproject ->
+    from (subproject.configurations.archives.allArtifacts.files.collect { zipTree(it) }) {
+      exclude 'META-INF/MANIFEST.MF'
+    }
+    from (subproject.configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+      exclude 'META-INF/MANIFEST.MF'
+    }
+  }
+}
+
+def binaryFile = new File(buildDir, "libs/$name-binary.jar")
+task binaryJar << {
+ def jarFile = fatJar.archivePath
+
+ binaryFile.getParentFile().mkdirs()
+ binaryFile << "#!/bin/sh\n\nexec java -jar \$0 \"\$@\"\n\n"
+ jarFile.withInputStream { binaryFile.append it }
+
+ binaryFile.setExecutable true, false
+}
+binaryJar.dependsOn(fatJar)
+
+task copyBinary(type: Copy, dependsOn: 'binaryJar') {
+ from(binaryFile)
+ into buildDir
+ rename(".*", project.name)
+}
+tasks.getByName('assemble').dependsOn('copyBinary')

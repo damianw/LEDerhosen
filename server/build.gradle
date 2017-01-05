@@ -1,0 +1,9 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+  compile "com.illposed.osc:javaosc-core:${versions.javaosc}"
+  compile "de.weltraumschaf.commons:jcommander:${versions.jcommander}"
+  compile project(":common")
+}

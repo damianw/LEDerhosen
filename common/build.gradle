@@ -1,0 +1,10 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+  compile "com.facebook.rebound:rebound:${versions.rebound}"
+  compile "io.reactivex:rxjava:${versions.rxjava}"
+  compile "com.jakewharton.rxrelay:rxrelay:${versions.rxrelay}"
+  compile project(":driver")
+}
