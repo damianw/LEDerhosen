@@ -5,8 +5,6 @@ import com.beust.jcommander.JCommander
 import com.beust.jcommander.Parameter
 import com.beust.jcommander.ParameterException
 import com.fazecast.jSerialComm.SerialPort
-import wtf.log.lederhosen.common.controller.StripController
-import wtf.log.lederhosen.driver.LightStrip
 import kotlin.system.exitProcess
 
 /**
@@ -59,17 +57,24 @@ private object ProgramArguments {
   var listPorts: Boolean = false
 
   @Parameter(
-      names = arrayOf("--count", "-c"),
-      description = "Number of LEDs in the strip",
+      names = arrayOf("--columns", "-c"),
+      description = "Number of columns",
       required = true
   )
-  var pixelCount: Int? = null
+  var columnCount: Int? = null
+
+  @Parameter(
+      names = arrayOf("--rows", "-r"),
+      description = "Number of rows",
+      required = true
+  )
+  var rowCount: Int? = null
 
   @Parameter(
       names = arrayOf("--osc-port", "-p"),
       description = "Port to run the OSC server on"
   )
-  var oscPort: Int = 9090
+  var oscPort: Int = 1605
 
 }
 
@@ -92,7 +97,7 @@ fun main(args: Array<String>) {
     when {
       help -> exitWithUsage()
       listPorts -> listPorts()
-      else -> runServer(pixelCount!!, serialPort, oscPort)
+      else -> runServer(columnCount!!, rowCount!!, serialPort, oscPort)
     }
   }
 }
@@ -103,9 +108,8 @@ private fun listPorts() {
       .forEach(::println)
 }
 
-private fun runServer(pixelCount: Int, serialPort: SerialPort, oscPort: Int) {
-  val strip = LightStrip.open(pixelCount, serialPort)
-  val controller = StripController(strip)
+private fun runServer(columnCount: Int, rowCount: Int, serialPort: SerialPort, oscPort: Int) {
+  val controller = SpectrumController.open(columnCount, rowCount, serialPort)
   OscServer(controller, oscPort).apply(OscServer::start)
   KeepAliveThread().apply(Thread::start)
   println("OSC server for ${serialPort.systemPortName} running on port $oscPort")
