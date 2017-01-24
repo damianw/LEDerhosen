@@ -3,6 +3,7 @@ package wtf.log.lederhosen.server
 import com.fazecast.jSerialComm.SerialPort
 import javafx.scene.paint.Color
 import wtf.log.lederhosen.driver.LightStrip
+import wtf.log.lederhosen.driver.util.deriveWith
 import java.io.Closeable
 
 /**
@@ -36,12 +37,23 @@ class SpectrumController(
   private fun set(columnIndex: Int, magnitude: Float) {
     if (columnIndex !in 0..lastColumn) throw IndexOutOfBoundsException()
 
-    val columnHeight = (magnitude.coerceIn(0f, 1f) * lastRow).toInt()
-    val start = columnIndex * rowCount
-    val end = start + columnHeight
-    val pixels = (start..end).toList().toIntArray()
+    val columnStart = columnIndex * rowCount
 
-    lightStrip.set(*pixels, color = Color.RED)
+    val columnHeight = magnitude.coerceIn(0f, 1f) * rowCount
+    val primarySegmentHeight = columnHeight.toInt()
+
+    val primaryPixels = (columnStart until (columnStart + primarySegmentHeight)).toList().toIntArray()
+    lightStrip.set(*primaryPixels, color = Color.GREEN)
+
+    val topperBrightness = columnHeight - primarySegmentHeight
+    val topperPixel = columnStart + primarySegmentHeight
+    if (primarySegmentHeight < rowCount) {
+      val topBrightnessLog = Math.log1p(topperBrightness.toDouble()) / LOG_TWO
+      val baseColor = if (topperPixel == columnStart + lastRow) Color.RED else Color.GREEN
+      lightStrip[topperPixel] = baseColor.deriveWith(brightnessFactor = topBrightnessLog)
+    } else {
+      lightStrip[columnStart + lastRow] = Color.RED
+    }
   }
 
   fun render(magnitudes: List<Float>) {
@@ -55,6 +67,8 @@ class SpectrumController(
   }
 
   companion object {
+
+    private val LOG_TWO = Math.log(2.0)
 
     fun open(columnCount: Int, rowCount: Int, port: SerialPort) = SpectrumController(
         lightStrip = LightStrip.open(columnCount * rowCount, port),
