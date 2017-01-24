@@ -22,9 +22,9 @@ class SpectrumProcessor(
     val maxAmplitude: Float,
     val sampleRate: Float = AudioFormats.Defaults.SAMPLE_RATE,
     val bufferSize: Int = SpectrumProcessor.DEFAULT_BUFFER_SIZE,
-    val minFrequency: Double = 40.0,
-    val maxFrequency: Double = 18000.0,
-    val frameRate: Int = 60
+    val minFrequency: Double = 50.0,
+    val maxFrequency: Double = 17000.0,
+    val frameRate: Int = 960
 ) : AudioProcessor {
 
   init {
