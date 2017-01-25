@@ -14,6 +14,7 @@ fun main(args: Array<String>) {
   val clientArguments = ClientArguments()
   val serverArguments = ServerArguments()
   val commander = JCommander(programArguments).apply {
+    setProgramName("LEDerhosen")
     addCommand(clientArguments)
     addCommand(serverArguments)
   }
