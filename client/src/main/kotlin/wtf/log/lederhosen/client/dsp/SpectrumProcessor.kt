@@ -21,7 +21,7 @@ class SpectrumProcessor(
     val bucketCount: Int,
     val maxAmplitude: Float,
     val sampleRate: Float = AudioFormats.Defaults.SAMPLE_RATE,
-    val bufferSize: Int = SpectrumProcessor.DEFAULT_BUFFER_SIZE,
+    val bufferSize: Int = AudioFormats.Defaults.BUFFER_SIZE,
     val minFrequency: Double = 50.0,
     val maxFrequency: Double = 17000.0,
     val frameRate: Int = 960
@@ -104,8 +104,6 @@ class SpectrumProcessor(
   }
 
   companion object {
-
-    const val DEFAULT_BUFFER_SIZE = 4096
 
     private val TINY_LOG = Math.log1p(1.0000001)
 

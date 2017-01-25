@@ -45,7 +45,7 @@ subprojects.each { subproject ->
 
 task fatJar(type: Jar, dependsOn: subprojects.jar) {
   manifest {
-    attributes 'Main-Class': 'wtf.log.lederhosen.server.MainKt'
+    attributes 'Main-Class': 'wtf.log.lederhosen.cli.MainKt'
   }
   
   subprojects.each { subproject ->
