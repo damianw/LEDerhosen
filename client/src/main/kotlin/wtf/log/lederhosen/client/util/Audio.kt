@@ -35,6 +35,9 @@ object AudioFormats {
     const val SIGNED = true
     const val BIG_ENDIAN = false
 
+    const val BUFFER_SIZE = 4096
+    const val BUFFER_OVERLAP = 768 * 4
+
   }
 
 }
