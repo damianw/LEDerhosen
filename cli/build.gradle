@@ -1,0 +1,10 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+  compile "de.weltraumschaf.commons:jcommander:${versions.jcommander}"
+  compile project(":common")
+  compile project(":server")
+  compile project(":client")
+}

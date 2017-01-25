@@ -1,3 +1,5 @@
 include 'server'
+include 'client'
 include 'driver'
 include 'common'
+include 'cli'
